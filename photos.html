@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bankai - Photos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Lecteur Audio Flottant -->
+    <audio id="bg-music" loop>
+        <source src="musique-2.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="audio-player-widget">
+        <button class="audio-btn" id="play-pause-btn" title="Lecture / Pause">
+            <i class="fa-solid fa-play" id="play-icon"></i>
+        </button>
+        <div class="audio-info">
+            <span class="audio-title">Music</span>
+            <div class="volume-container">
+                <i class="fa-solid fa-volume-high" id="volume-icon"></i>
+                <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.01" value="0.7">
+            </div>
+        </div>
+    </div>
+
+    <div id="particles-container"></div>
+
+    <div class="container">
+        <!-- Bouton Retour -->
+        <div class="top-bar">
+            <a href="index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Compteur</a>
+        </div>
+
+        <section class="gallery-section">
+            <h2 class="section-heading">tu vas voir ton front un peu</h2>
+            <p class="subtitle text-center">tu peux cliquer pour voir hein ✨</p>
+
+            <div class="gallery-grid">
+                
+                <div class="photo-card" data-img="photo1.jpg" data-title="la dame masquée" data-date="c'est quel we t'as caché tes yeux avec là">
+                    <div class="photo-frame">
+                        <img src="photo 1.jpeg" alt="Photo 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="placeholder-fallback" style="display: none; flex-direction: column; align-items: center;">
+                            <div class="placeholder-icon">📷</div>
+                            <div class="placeholder-text">Photo 1</div>
+                        </div>
+                    </div>
+                    <div class="photo-caption">
+                        <div class="caption-title">bankaiiiiiiii</div>
+                        <div class="caption-date">va chierrrrrrrrr</div>
+                    </div>
+                </div>
+
+                <div class="photo-card" data-img="photo2.jpg" data-title="donc tu me regardes" data-date="on dirait vrai chat">
+                    <div class="photo-frame">
+                        <img src="photo 2.jpeg" alt="Photo 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="placeholder-fallback" style="display: none; flex-direction: column; align-items: center;">
+                            <div class="placeholder-icon">📷</div>
+                            <div class="placeholder-text">Photo 2</div>
+                        </div>
+                    </div>
+                    <div class="photo-caption">
+                        <div class="caption-title">un mannequin cet enfant</div>
+                        <div class="caption-date">i don't care</div>
+                    </div>
+                </div>
+
+                <div class="photo-card" data-img="photo3.jpg" data-title="concentrée aussi on dirait bonne chose" data-date="Je suis sûr que c'est kpakpatoya">
+                    <div class="photo-frame">
+                        <img src="photo 3.jpeg" alt="Photo 3" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="placeholder-fallback" style="display: none; flex-direction: column; align-items: center;">
+                            <div class="placeholder-icon">📷</div>
+                            <div class="placeholder-text">Photo 3</div>
+                        </div>
+                    </div>
+                    <div class="photo-caption">
+                        <div class="caption-title">Un front outerversal</div>
+                        <div class="caption-date">tu sors hein petite</div>
+                    </div>
+                </div>
+
+                <div class="photo-card" data-img="photo4.jpg" data-title="je te vois petite" data-date="Ton maudia si tu souris n'oublies pas de cliquer sur musique">
+                    <div class="photo-frame">
+                        <img src="photo 4.jpeg" alt="Photo 4" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="placeholder-fallback" style="display: none; flex-direction: column; align-items: center;">
+                            <div class="placeholder-icon">📷</div>
+                            <div class="placeholder-text">Photo 4</div>
+                        </div>
+                    </div>
+                    <div class="photo-caption">
+                        <div class="caption-title">en tout cas tu as gros front</div>
+                        <div class="caption-date">mais bon</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Bouton vers la lettre -->
+        <div class="navigation-wrapper">
+            <a href="lettre.html" class="nav-btn">
+                <span>Un petit discours du xeno</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal pour photo agrandie -->
+    <div id="photo-modal" class="photo-modal">
+        <span class="modal-close">&times;</span>
+        <div class="modal-content-wrapper">
+            <img id="modal-img" src="" alt="Photo Agrandie">
+            <div id="modal-caption" class="modal-caption">
+                <h3 id="modal-title"></h3>
+                <p id="modal-date"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bankai - Attente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Lecteur Audio Flottant -->
+    <audio id="bg-music" loop>
+        <source src="musique-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="audio-player-widget">
+        <button class="audio-btn" id="play-pause-btn" title="Lecture / Pause">
+            <i class="fa-solid fa-play" id="play-icon"></i>
+        </button>
+        <div class="audio-info">
+            <span class="audio-title">music</span>
+            <div class="volume-container">
+                <i class="fa-solid fa-volume-high" id="volume-icon"></i>
+                <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.01" value="0.7">
+            </div>
+        </div>
+    </div>
+
+    <!-- Particules de cœurs -->
+    <div id="particles-container"></div>
+
+    <div class="container page-center">
+        <!-- En-tête -->
+        <header>
+            <h1 class="main-title">tu vas attendre perite</h1>
+            <p class="subtitle" id="status-subtitle">Patiente avec ton gros front go de yop</p>
+        </header>
+
+        <!-- Compte à rebours de 10 minutes -->
+        <section class="timer-section">
+            <div class="timer-title" id="timer-status-title">tu vas attendre ca viendra dans :</div>
+            <div class="timer-grid timer-3-cols">
+                <div class="timer-box">
+                    <span class="timer-value" id="hours">00</span>
+                    <span class="timer-label">Heures</span>
+                </div>
+                <div class="timer-box">
+                    <span class="timer-value" id="minutes">10</span>
+                    <span class="timer-label">Minutes</span>
+                </div>
+                <div class="timer-box">
+                    <span class="timer-value" id="seconds">00</span>
+                    <span class="timer-label">Secondes</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bouton vers l'album (Verrouillé au départ) -->
+        <div class="navigation-wrapper">
+            <a href="photos.html" id="photo-btn" class="nav-btn locked">
+                <i class="fa-solid fa-lock" id="btn-icon"></i>
+                <span id="btn-text">Verrouillé (Attends 10m)</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

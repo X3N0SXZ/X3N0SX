@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notre Histoire d'Amour - Lettre</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Lecteur Audio Flottant -->
+    <audio id="bg-music" loop>
+        <source src="musique-3.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="audio-player-widget">
+        <button class="audio-btn" id="play-pause-btn" title="Lecture / Pause">
+            <i class="fa-solid fa-play" id="play-icon"></i>
+        </button>
+        <div class="audio-info">
+            <span class="audio-title">Notre Chanson</span>
+            <div class="volume-container">
+                <i class="fa-solid fa-volume-high" id="volume-icon"></i>
+                <input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.01" value="0.7">
+            </div>
+        </div>
+    </div>
+
+    <div id="particles-container"></div>
+
+    <div class="container page-center">
+        <!-- Bouton Retour -->
+        <div class="top-bar">
+            <a href="photos.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Galerie Photos</a>
+        </div>
+
+
+    <style>
+        :root {
+            --bg-dark: #0a0508;
+            --envelope-bg: #e5cb9e;
+            --envelope-inner: #d3b785;
+            --envelope-shadow: rgba(0, 0, 0, 0.6);
+            --heart-pink: #ff1493;
+            --heart-glow: #ff69b4;
+            --paper-bg: #fffbf0;
+            --paper-text: #2c1810;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            overflow-x: hidden;
+            margin: 0;
+            user-select: none;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Main Container */
+        .viewport-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .envelope-perspective {
+            perspective: 1200px;
+            margin-top: 40px;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .envelope-container {
+            position: relative;
+            width: 380px;
+            height: 250px;
+            background-color: var(--envelope-inner);
+            border-radius: 6px;
+            box-shadow: 0 25px 50px -12px var(--envelope-shadow), 0 0 30px rgba(255, 20, 147, 0.15);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            transform-style: preserve-3d;
+        }
+
+        @media (max-width: 480px) {
+            .envelope-container {
+                width: 310px;
+                height: 205px;
+            }
+        }
+
+        .envelope-container:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 30px 60px -12px var(--envelope-shadow), 0 0 40px rgba(255, 20, 147, 0.3);
+        }
+
+        /* Envelope Flaps Mechanics */
+        .flap-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #cca871;
+            border-radius: 6px;
+            z-index: 1;
+        }
+
+        .letter-paper {
+            position: absolute;
+            bottom: 10px;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: var(--paper-bg);
+            border-radius: 8px;
+            padding: 20px 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            z-index: 2;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.8s, height 0.8s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: var(--paper-text);
+            border: 1px solid #ebd7b2;
+        }
+
+        /* Paper state when opened */
+        .envelope-container.open .letter-paper {
+            transform: translateY(-160px) scale(1.05);
+            z-index: 10;
+            height: 340px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            overflow-y: auto;
+        }
+
+        @media (max-width: 480px) {
+            .envelope-container.open .letter-paper {
+                transform: translateY(-130px) scale(1.03);
+                height: 300px;
+            }
+        }
+
+        /* Letter Styling */
+        .letter-content {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.35rem;
+            line-height: 1.8;
+            color: #4a1c1d;
+        }
+
+        .letter-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.2rem;
+            color: #8b0000;
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed rgba(139, 0, 0, 0.2);
+            padding-bottom: 5px;
+        }
+
+        /* Envelope Front Fold Flaps */
+        .flap-left {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            clip-path: polygon(0 0, 52% 50%, 0 100%);
+            background-color: #deb881;
+            z-index: 4;
+            border-radius: 6px 0 0 6px;
+        }
+
+        .flap-right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            clip-path: polygon(100% 0, 48% 50%, 100% 100%);
+            background-color: #d6af76;
+            z-index: 4;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .flap-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            clip-path: polygon(0 100%, 50% 45%, 100% 100%);
+            background-color: #e5cb9e;
+            z-index: 5;
+            border-radius: 0 0 6px 6px;
+        }
+
+        .flap-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            clip-path: polygon(0 0, 100% 0, 50% 55%);
+            background-color: #edd5a8;
+            z-index: 6;
+            transform-origin: top center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.6s;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .envelope-container.open .flap-top {
+            transform: rotateX(180deg);
+            z-index: 3;
+        }
+
+        /* Heart Seal Button */
+        .heart-seal {
+            position: absolute;
+            top: 52%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 38px;
+            height: 38px;
+            background-color: var(--heart-pink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: #ffffff;
+            font-size: 1.1rem;
+            box-shadow: 0 0 15px var(--heart-glow), 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 7;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            animation: pulse-glow 2s infinite;
+        }
+
+        .envelope-container.open .heart-seal {
+            transform: translate(-50%, -50%) scale(0.85);
+            animation: none;
+            box-shadow: 0 0 8px var(--heart-glow);
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 15px var(--heart-glow), 0 4px 10px rgba(0,0,0,0.3);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.15);
+                box-shadow: 0 0 25px var(--heart-pink), 0 6px 15px rgba(255, 20, 147, 0.6);
+            }
+        }
+
+        /* Subtitle Text ("Touch This Heart") */
+        .heart-subtitle {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--heart-pink);
+            text-shadow: 0 0 12px rgba(255, 20, 147, 0.6);
+            letter-spacing: 0.5px;
+            margin-top: 15px;
+            text-align: center;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .heart-subtitle:hover {
+            color: var(--heart-glow);
+            text-shadow: 0 0 18px rgba(255, 105, 180, 0.9);
+        }
+
+        .full-read-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+            padding: 8px 16px;
+            background: linear-gradient(45deg, var(--heart-pink), #ff65a3);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 20, 147, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .full-read-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(255, 20, 147, 0.5);
+        }
+
+        /* Full Screen Reading Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 5, 8, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--paper-bg);
+            color: var(--paper-text);
+            max-width: 650px;
+            width: 100%;
+            max-height: 85vh;
+            border-radius: 16px;
+            padding: 35px 28px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 30px rgba(255, 20, 147, 0.2);
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid #ebd7b2;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 15px;
+            right: 18px;
+            background: rgba(0, 0, 0, 0.08);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: #8b0000;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+        }
+
+        .close-modal-btn:hover {
+            background: rgba(255, 20, 147, 0.15);
+        }
+
+        /* Audio Controls Widget */
+        .audio-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .audio-control:hover {
+            background: rgba(255, 20, 147, 0.2);
+            border-color: var(--heart-pink);
+        }
+
+        /* Footer */
+        footer {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 15px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        footer span.heart-icon {
+            color: var(--heart-pink);
+            display: inline-block;
+            margin: 0 2px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--heart-pink);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas for Floating Heart Particles -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Main Interactive Viewport -->
+    <main class="viewport-container">
+
+        <div class="envelope-perspective">
+            <div class="envelope-container" id="envelope">
+                
+                <!-- Back flap inside -->
+                <div class="flap-back"></div>
+
+                <!-- Letter Paper inside envelope -->
+                <div class="letter-paper" id="letter-paper">
+                    <div class="letter-title">bankai</div>
+                    <div class="letter-content">
+                        <p class="mb-3">Depuis le premier instant où tu es entrée dans ma vie, chaque journée a pris une teinte plus lumineuse et plus douce.</p>
+                        <p class="mb-3">Tu es ce sourire qui illumine mes matins et cette sérénité qui apaise mes nuits.</p>
+                        <p class="mb-3">Chaque moment partagé à tes côtés est une étincelle que je chéris au plus profond de mon cœur.</p>
+                        <p class="mb-3">Aujourd'hui, je veux simplement te rappeler à quel point tu es précieuse, unique et infiniment aimée.</p>
+                        <p class="text-right font-bold text-pink-700 mt-4">— Pour toujours à toi</p>
+                    </div>
+
+                    <button class="full-read-btn" id="open-modal-btn">
+                        <i class="fa-solid fa-book-open"></i> Lire toute la lettre
+                    </button>
+                </div>
+
+                <!-- Front folds -->
+                <div class="flap-left"></div>
+                <div class="flap-right"></div>
+                <div class="flap-bottom"></div>
+
+                <!-- Animated Top Flap -->
+                <div class="flap-top"></div>
+
+                <!-- Pink Heart Seal Button -->
+                <div class="heart-seal" id="heart-btn" title="Ouvrir / Fermer">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Subtitle matching exact design -->
+        <div class="heart-subtitle" id="subtitle-text">Touch This Heart</div>
+
+    </main>
+
+    <div class="modal-overlay" id="letter-modal">
+        <div class="modal-card">
+            <button class="close-modal-btn" id="close-modal-btn" title="Fermer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div class="letter-title mb-6">Joyeux Anniversaire petite ❤️</div>
+
+            <div class="space-y-4 font-serif text-lg leading-relaxed text-amber-950">
+                <div class="p-3 border-b border-amber-200/60 flex items-baseline gap-3">
+                    <span class="text-xs font-sans font-bold text-pink-500 opacity-70">01</span>
+                    <span>Depuis le premier jour où nos regards se sont croisés, tout a changé dans ma vie.</span>
+                </div>
+                <div class="p-3 border-b border-amber-200/60 flex items-baseline gap-3">
+                    <span class="text-xs font-sans font-bold text-pink-500 opacity-70">02</span>
+                    <span>Mon monde a pris une tout autre couleur, plus douce, chaleureuse et éclatante.</span>
+                </div>
+                <div class="p-3 border-b border-amber-200/60 flex items-baseline gap-3">
+                    <span class="text-xs font-sans font-bold text-pink-500 opacity-70">03</span>
+                    <span>Chaque matin, penser à toi apporte un sourire immédiat sur mon visage.</span>
+                </div>
+                <div class="p-3 border-b border-amber-200/60 flex items-baseline gap-3">
+                    <span class="text-xs font-sans font-bold text-pink-500 opacity-70">04</span>
+                    <span>Tu es cette étincelle magique qui éclaire même mes journées les plus sombres.</span>
+                </div>
+                <div class="p-3 border-b border-amber-200/60 flex items-baseline gap-3">
+                    <span class="text-xs font-sans font-bold text-pink-500 opacity-70">05</span>
+                    <span>À tes côtés, j'ai appris la vraie définition d'aimer d'un amour pur et sincère.</span>
+                </div>
+                <div class="p-3 border-b border-amber-200/60 flex items-baseline gap-3">
+                    <span class="text-xs font-sans font-bold text-pink-500 opacity-70">06</span>
+                    <span>Tes rires sont la plus belle mélodie que mes oreilles aient jamais entendue.</span>
+                </div>
+                <div class="p-3 border-b border-amber-200/60 flex items-baseline gap-3">
+                    <span class="text-xs font-sans font-bold text-pink-500 opacity-70">07</span>
+                    <span>Chaque second passé ensemble devient un trésor éternel gravé dans mon cœur.</span>
+                </div>
+                <div class="p-3 border-b border-amber-200/60 flex items-baseline gap-3">
+                    <span class="text-xs font-sans font-bold text-pink-500 opacity-70">08</span>
+                    <span>J'aime ta voix, la tendresse de ton regard, et la bienveillance de tes gestes.</span>
+                </div>
+                <div class="p-3 border-b border-amber-200/60 flex items-baseline gap-3">
+                    <span class="text-xs font-sans font-bold text-pink-500 opacity-70">09</span>
+                    <span>Tu m'apportes un apaisement et une joie sans égal au quotidien.</span>
+                </div>
+                <div class="p-3 border-b border-amber-200/60 flex items-baseline gap-3">
+                    <span class="text-xs font-sans font-bold text-pink-500 opacity-70">10</span>
+                    <span>Merci d'exister et d'être cette personne extraordinaire qui illumine mon univers.</span>
+                </div>
+                <div class="p-3 border-b border-amber-200/60 flex items-baseline gap-3">
+                    <span class="text-xs font-sans font-bold text-pink-500 opacity-70">11</span>
+                    <span>Mon amour pour toi grandit un peu plus chaque jour, aujourd'hui et pour toujours.</span>
+                </div>
+            </div>
+
+            <div class="text-right font-bold text-2xl text-red-800 mt-8 font-serif">
+                Je t'aime infiniment ❤️
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer matching screenshot -->
+    <footer>
+        Designed with <span class="heart-icon">la chovalité</span> du xeno
+    </footer>
+
+    <script>
+        // DOM Elements
+        const envelope = document.getElementById('envelope');
+        const heartBtn = document.getElementById('heart-btn');
+        const subtitleText = document.getElementById('subtitle-text');
+        const openModalBtn = document.getElementById('open-modal-btn');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const letterModal = document.getElementById('letter-modal');
+        const audioToggle = document.getElementById('audio-toggle');
+        const audioIcon = document.getElementById('audio-icon');
+        const audioText = document.getElementById('audio-text');
+
+        let isOpen = false;
+
+        function toggleEnvelope(e) {
+            if (e) e.stopPropagation();
+            isOpen = !isOpen;
+
+            if (isOpen) {
+                envelope.classList.add('open');
+                subtitleText.textContent = 'Click To Close';
+                subtitleText.style.color = '#ff65a3';
+                createHeartBurst();
+            } else {
+                envelope.classList.remove('open');
+                subtitleText.textContent = 'Touch This Heart';
+                subtitleText.style.color = 'var(--heart-pink)';
+            }
+        }
+
+        // Event Listeners for Opening/Closing
+        envelope.addEventListener('click', (e) => {
+            // Prevent toggling if user clicks the full-read button inside paper
+            if (e.target.closest('#open-modal-btn')) return;
+            toggleEnvelope(e);
+        });
+
+        subtitleText.addEventListener('click', toggleEnvelope);
+
+        // Modal Controls
+        openModalBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            letterModal.classList.add('active');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            letterModal.classList.remove('active');
+        });
+
+        letterModal.addEventListener('click', (e) => {
+            if (e.target === letterModal) {
+                letterModal.classList.remove('active');
+            }
+        });
+
+        let audioCtx = null;
+        let isPlayingAudio = false;
+        let melodyInterval = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playNote(freq, duration) {
+            if (!audioCtx || !isPlayingAudio) return;
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playRomanticMelody() {
+            const notes = [261.63, 329.63, 392.00, 523.25, 440.00, 349.23, 392.00, 329.63];
+            let step = 0;
+
+            melodyInterval = setInterval(() => {
+                if (!isPlayingAudio) return;
+                playNote(notes[step % notes.length], 1.2);
+                step++;
+            }, 500);
+        }
+
+        audioToggle.addEventListener('click', () => {
+            initAudio();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            isPlayingAudio = !isPlayingAudio;
+
+            if (isPlayingAudio) {
+                audioIcon.className = 'fa-solid fa-volume-high text-pink-400';
+                audioText.textContent = 'Musique: ON';
+                playRomanticMelody();
+            } else {
+                audioIcon.className = 'fa-solid fa-music text-pink-400';
+                audioText.textContent = 'Musique: OFF';
+                if (melodyInterval) clearInterval(melodyInterval);
+            }
+        });
+
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, isBurst = false) {
+                this.x = x || Math.random() * canvas.width;
+                this.y = y || (isBurst ? y : canvas.height + 20);
+                this.size = Math.random() * 12 + 8;
+                this.speedY = isBurst ? (Math.random() - 0.5) * 6 : -(Math.random() * 1.5 + 0.5);
+                this.speedX = isBurst ? (Math.random() - 0.5) * 6 : (Math.random() - 0.5) * 0.8;
+                this.opacity = Math.random() * 0.6 + 0.4;
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotSpeed = (Math.random() - 0.5) * 0.05;
+                this.color = `hsl(${Math.random() * 30 + 330}, 100%, 65%)`;
+                this.isBurst = isBurst;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                
+                // Draw Heart Path
+                ctx.beginPath();
+                const topCurveHeight = this.size * 0.3;
+                ctx.moveTo(0, topCurveHeight);
+                ctx.bezierCurveTo(0, 0, -this.size / 2, 0, -this.size / 2, topCurveHeight);
+                ctx.bezierCurveTo(-this.size / 2, (this.size + topCurveHeight) / 2, 0, this.size, 0, this.size);
+                ctx.bezierCurveTo(0, this.size, this.size / 2, (this.size + topCurveHeight) / 2, this.size / 2, topCurveHeight);
+                ctx.bezierCurveTo(this.size / 2, 0, 0, 0, 0, topCurveHeight);
+                ctx.closePath();
+                ctx.fill();
+                
+                ctx.restore();
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotSpeed;
+
+                if (this.isBurst) {
+                    this.opacity -= 0.015;
+                } else if (this.y < -20) {
+                    this.y = canvas.height + 20;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+        }
+
+        // Particle Heart Burst Effect on click
+        function createHeartBurst() {
+            const rect = envelope.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            for (let i = 0; i < 25; i++) {
+                particles.push(new Particle(centerX, centerY, true));
+            }
+        }
+
+        // Init floating particles
+        for (let i = 0; i < 30; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+
+                if (particles[i].isBurst && particles[i].opacity <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+    </script>
+        <script src="script.js"></script>
+</body>
+</html>
